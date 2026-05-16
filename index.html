@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>kora live - مباريات اليوم بث مباشر</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,51 +13,21 @@
       color: #fff;
       min-height: 100vh;
     }
-
-    /* ===== الهيدر ===== */
     header {
       background: linear-gradient(135deg, #1a1a3e 0%, #16213e 50%, #0f3460 100%);
       padding: 30px 20px;
       text-align: center;
       border-bottom: 3px solid #e94560;
-      position: relative;
-      overflow: hidden;
     }
-    header::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(233,69,96,0.1) 0%, transparent 60%);
-      animation: pulseGlow 4s ease-in-out infinite;
-    }
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.2); opacity: 1; }
-    }
-    header h1 {
-      font-size: 32px;
-      font-weight: 900;
-      position: relative;
-      z-index: 1;
-    }
+    header h1 { font-size: 32px; font-weight: 900; }
     header h1 span { color: #e94560; }
-    header p {
-      color: #8899aa;
-      font-size: 16px;
-      position: relative;
-      z-index: 1;
-      margin-top: 5px;
-    }
+    header p { color: #8899aa; font-size: 16px; margin-top: 5px; }
 
-    /* ===== الأزرار ===== */
     .tabs {
       display: flex;
       justify-content: center;
       gap: 10px;
-      padding: 20px;
+      padding: 15px 20px;
       flex-wrap: wrap;
       background: #1a1a2e;
       position: sticky;
@@ -70,35 +39,20 @@
       background: transparent;
       color: #8899aa;
       border: 2px solid #2a2a4e;
-      padding: 10px 25px;
+      padding: 8px 25px;
       border-radius: 25px;
       cursor: pointer;
       font-family: 'Tajawal', sans-serif;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       transition: 0.3s;
     }
     .tabs button:hover { border-color: #e94560; color: #fff; }
-    .tabs button.active {
-      background: #e94560;
-      border-color: #e94560;
-      color: #fff;
-    }
+    .tabs button.active { background: #e94560; border-color: #e94560; color: #fff; }
 
-    /* ===== المحتوى ===== */
     .container { max-width: 900px; margin: auto; padding: 20px; }
+    .count-bar { text-align: center; color: #667; font-size: 14px; margin-bottom: 20px; }
 
-    /* قسم التاريخ */
-    .date-header {
-      font-size: 22px;
-      font-weight: 700;
-      margin: 25px 0 15px;
-      padding-right: 15px;
-      border-right: 4px solid #e94560;
-      color: #e94560;
-    }
-
-    /* ===== كارد المباراة ===== */
     .match-card {
       background: linear-gradient(135deg, #1a1a3e, #16213e);
       border-radius: 16px;
@@ -106,18 +60,15 @@
       margin-bottom: 15px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 15px;
       border: 1px solid #2a2a4e;
       transition: 0.3s;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
     }
     .match-card:hover {
       border-color: #e94560;
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(233,69,96,0.2);
+      box-shadow: 0 8px 30px rgba(233,69,96,0.15);
     }
     .match-card.live {
       border-color: #e94560;
@@ -127,237 +78,400 @@
       0%, 100% { border-color: #e94560; }
       50% { border-color: #ff6b81; }
     }
-    .match-card.finished { opacity: 0.6; }
+    .match-card.finished { opacity: 0.55; }
     .match-card.finished:hover { opacity: 1; }
+    .match-card.no-stream { opacity: 0.5; cursor: default; }
+    .match-card.no-stream:hover { transform: none; box-shadow: none; border-color: #2a2a4e; }
 
-    .match-teams {
+    .match-body { flex: 1; min-width: 0; }
+
+    .league-badge {
+      display: inline-block;
+      background: #0f3460;
+      color: #88c0ff;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .teams-row {
       display: flex;
       align-items: center;
-      gap: 20px;
-      flex: 1;
+      gap: 12px;
+      margin-bottom: 8px;
     }
-    .team {
+    .team-side {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-weight: 700;
-      font-size: 17px;
-      min-width: 120px;
+      flex: 1;
     }
-    .team.left { justify-content: flex-end; }
-    .team .flag { font-size: 28px; }
-    .team .name { white-space: nowrap; }
-
-    .match-vs {
-      color: #e94560;
-      font-weight: 900;
-      font-size: 14px;
-    }
-    .match-vs .result {
-      display: block;
-      text-align: center;
-      font-size: 20px;
-      color: #fff;
-    }
-
-    .match-info {
-      text-align: center;
-      min-width: 100px;
-    }
-    .match-info .time {
-      font-size: 22px;
-      font-weight: 900;
-      color: #fff;
-    }
-    .match-info .date-sm {
-      font-size: 13px;
-      color: #8899aa;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    .badge.live {
-      background: #e94560;
-      color: #fff;
-      animation: blink 1s infinite;
-    }
-    @keyframes blink { 50% { opacity: 0.5; } }
-    .badge.upcoming { background: #0f3460; color: #88c0ff; }
-    .badge.finished { background: #2a2a4e; color: #666; }
-
-    .match-details {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 5px;
-      font-size: 13px;
-      color: #8899aa;
-      min-width: 130px;
-    }
-    .match-details .league {
-      background: #2a2a4e;
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      color: #88c0ff;
-    }
-    .match-details .channels {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-    .match-details .channels span {
-      background: #1a1a3e;
-      padding: 2px 8px;
-      border-radius: 8px;
-      font-size: 11px;
-      color: #aabbcc;
-      border: 1px solid #2a2a4e;
-    }
-
-    .play-btn {
-      background: #e94560;
-      color: #fff;
-      border: none;
-      width: 50px;
-      height: 50px;
+    .team-side.right { justify-content: flex-end; }
+    .team-side .logo {
+      width: 38px; height: 38px;
       border-radius: 50%;
-      cursor: pointer;
-      font-size: 22px;
-      transition: 0.3s;
+      background: #2a2a4e;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
       flex-shrink: 0;
     }
-    .match-card.live .play-btn {
-      animation: pulseBtn 2s infinite;
+    .team-side .logo img { width: 100%; height: 100%; object-fit: contain; }
+    .team-side .name { font-weight: 700; font-size: 14px; white-space: nowrap; }
+
+    .match-vs { text-align: center; min-width: 40px; }
+    .match-vs .vs { color: #e94560; font-weight: 900; font-size: 13px; }
+    .match-vs .score { font-size: 18px; font-weight: 900; color: #fff; }
+
+    .match-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 75px;
     }
+    .match-time { font-size: 16px; font-weight: 900; white-space: nowrap; }
+    .badge-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+    .badge-status.live { background: #e94560; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.5; } }
+    .badge-status.upcoming { background: #0f3460; color: #88c0ff; }
+    .badge-status.finished { background: #2a2a4e; color: #667; }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .meta-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #8899aa;
+      background: #1a1a2e;
+      padding: 3px 10px;
+      border-radius: 8px;
+    }
+    .meta-tag.channel { color: #4fc3f7; background: rgba(79,195,247,0.1); }
+    .meta-tag.commentator { color: #ffb74d; background: rgba(255,183,77,0.1); }
+    .meta-tag.icon-only { padding: 3px 6px; }
+
+    .play-btn {
+      background: #e94560; color: #fff; border: none;
+      width: 46px; height: 46px; border-radius: 50%;
+      cursor: pointer; font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: 0.3s;
+    }
+    .match-card.live .play-btn { animation: pulseBtn 2s infinite; }
     @keyframes pulseBtn {
       0%, 100% { box-shadow: 0 0 0 0 rgba(233,69,96,0.6); }
       50% { box-shadow: 0 0 0 12px rgba(233,69,96,0); }
     }
     .play-btn:hover { transform: scale(1.1); }
+    .play-btn.disabled { background: #2a2a4e; cursor: not-allowed; }
 
-    /* ===== التجاوب ===== */
-    @media (max-width: 768px) {
-      .match-card { flex-wrap: wrap; }
-      .match-teams { width: 100%; justify-content: center; }
-      .team { min-width: auto; font-size: 14px; }
-      .team .flag { font-size: 22px; }
-      .match-info { min-width: auto; }
-      .match-details { width: 100%; align-items: center; text-align: center; }
-      .play-btn { margin: 0 auto; }
+    .loading-matches { text-align: center; padding: 60px; color: #667; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #2a2a4e;
+      border-top-color: #e94560;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .date-header {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 25px 0 15px;
+      padding-right: 15px;
+      border-right: 4px solid #e94560;
+      color: #e94560;
     }
 
-    /* ===== فوتر ===== */
     footer {
-      text-align: center;
-      padding: 30px;
-      color: #555;
-      font-size: 14px;
-      border-top: 1px solid #2a2a4e;
-      margin-top: 30px;
+      text-align: center; padding: 30px; color: #555;
+      font-size: 14px; border-top: 1px solid #2a2a4e; margin-top: 30px;
+    }
+
+    @media (max-width: 600px) {
+      .match-card { flex-wrap: wrap; padding: 15px; gap: 10px; }
+      .match-body { width: calc(100% - 60px); }
+      .team-side .name { font-size: 12px; }
+      .team-side .logo { width: 30px; height: 30px; }
+      .meta-row { gap: 5px; }
+      .meta-tag { font-size: 10px; padding: 2px 7px; }
+      .play-btn { width: 40px; height: 40px; font-size: 16px; }
     }
   </style>
 </head>
 <body>
-
   <header>
-    <h1>⚽ <span>kora</span> live</h1>
+    <h1>kora <span>live</span></h1>
     <p>بث مباشر لجميع مباريات اليوم</p>
   </header>
 
   <div class="tabs">
-    <button class="active" onclick="filterMatches('all')">📋 الكل</button>
-    <button onclick="filterMatches('live')">🔴 المباشر الآن</button>
-    <button onclick="filterMatches('upcoming')">⏳ القادمة</button>
-    <button onclick="filterMatches('finished')">✅ المنتهية</button>
+    <button class="active" onclick="filterMatches('all')">الكل</button>
+    <button onclick="filterMatches('live')">المباشر</button>
+    <button onclick="filterMatches('upcoming')">القادمة</button>
+    <button onclick="filterMatches('finished')">المنتهية</button>
   </div>
 
-  <div class="container" id="matchesContainer"></div>
+  <div class="container" id="matchesContainer">
+    <div class="loading-matches">
+      <div class="spinner"></div>
+      جارٍ تحميل المباريات...
+    </div>
+  </div>
 
-  <footer>
-    kora live &copy; 2025 - جميع الحقوق محفوظة
-  </footer>
+  <footer>kora live &copy; 2026</footer>
 
-  <script src="matches-data.js"></script>
+  <script src="config.js"></script>
   <script>
+    let allMatches = [];
     let currentFilter = 'all';
+    let leaguesCache = {};
+
+    function getStatus(match) {
+      const now = Date.now();
+      const diff = match.date - now;
+      if (diff > 0 && diff < 10800000) return 'live';
+      if (diff < 0 && Math.abs(diff) < 7200000) return 'live';
+      if (diff > 0) return 'upcoming';
+      return 'finished';
+    }
+
+    function hasStream(match) {
+      return CONFIG.KOORA_SOURCES[match.id] && CONFIG.KOORA_SOURCES[match.id].length > 0;
+    }
+
+    function formatTime(ts) {
+      const d = new Date(ts);
+      return d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+
+    function formatDate(ts) {
+      const d = new Date(ts);
+      const now = new Date();
+      const days = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+      const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+      if (d.toDateString() === now.toDateString()) return 'اليوم';
+      const tom = new Date(now); tom.setDate(tom.getDate()+1);
+      if (d.toDateString() === tom.toDateString()) return 'غداً';
+      return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()];
+    }
+
+    function groupByDate(matches) {
+      const groups = {};
+      matches.forEach(m => {
+        const key = new Date(m.date).toDateString();
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(m);
+      });
+      return groups;
+    }
+
+    function normalizeName(name) {
+      return name.replace(/FC$/, '').replace(/^FC\s/, '').trim().toLowerCase();
+    }
+
+    function matchTeamName(apiName, scoreName) {
+      const a = normalizeName(apiName);
+      const b = normalizeName(scoreName);
+      return a === b || a.includes(b) || b.includes(a);
+    }
+
+    async function fetchLeaguesData() {
+      try {
+        const results = await Promise.allSettled(
+          MAJOR_LEAGUES.map(lg =>
+            fetch(CONFIG.SPORTSRC_BASE + '?data=results&category=scores&league=' + lg.code)
+              .then(r => r.json())
+              .then(d => ({ league: lg.name, data: d.data || {} }))
+          )
+        );
+        results.forEach(r => {
+          if (r.status === 'fulfilled' && r.value.data) {
+            leaguesCache[r.value.league] = r.value.data;
+          }
+        });
+      } catch (e) {}
+    }
+
+    function enrichWithScores(match) {
+      const homeNorm = normalizeName(match.teams.home.name);
+      const awayNorm = normalizeName(match.teams.away.name);
+
+      for (const leagueName in leaguesCache) {
+        const data = leaguesCache[leagueName];
+        const allGames = [...(data.live || []), ...(data.finished || [])];
+
+        for (const game of allGames) {
+          const gHome = normalizeName(game.homeTeam?.name || game.homeTeam?.shortName || '');
+          const gAway = normalizeName(game.awayTeam?.name || game.awayTeam?.shortName || '');
+          if ((matchTeamName(match.teams.home.name, gHome) && matchTeamName(match.teams.away.name, gAway)) ||
+              (matchTeamName(match.teams.home.name, gAway) && matchTeamName(match.teams.away.name, gHome))) {
+            return {
+              league: leagueName,
+              homeScore: game.score?.fullTime?.home,
+              awayScore: game.score?.fullTime?.away,
+              referee: game.referees?.[0]?.name,
+              competition: game.competition?.name
+            };
+          }
+        }
+      }
+      return null;
+    }
+
+    function enrichMatch(match) {
+      const configInfo = CONFIG.MATCH_INFO[match.id];
+      if (configInfo) return configInfo;
+
+      const scoreMatch = enrichWithScores(match);
+      if (scoreMatch) {
+        const leagueInfo = CONFIG.LEAGUE_CHANNELS[scoreMatch.league] || CONFIG.LEAGUE_CHANNELS[scoreMatch.competition];
+        return {
+          league: scoreMatch.competition || scoreMatch.league,
+          channels: leagueInfo?.channels || [],
+          commentator: leagueInfo?.commentator || scoreMatch.referee || '',
+          homeScore: scoreMatch.homeScore,
+          awayScore: scoreMatch.awayScore
+        };
+      }
+
+      return { league: '', channels: [], commentator: '' };
+    }
+
+    async function loadMatches() {
+      try {
+        const [matchesRes] = await Promise.all([
+          fetch(CONFIG.SPORTSRC_BASE + '?data=matches&category=football'),
+          fetchLeaguesData()
+        ]);
+        const json = await matchesRes.json();
+        const raw = json.data || [];
+
+        allMatches = raw.map(m => {
+          const enriched = enrichMatch(m);
+          const status = getStatus(m);
+          return {
+            ...m,
+            status,
+            hasScore: enriched.homeScore != null,
+            homeScore: enriched.homeScore,
+            awayScore: enriched.awayScore,
+            league: enriched.league,
+            channels: enriched.channels,
+            commentator: enriched.commentator,
+            hasStream: hasStream(m)
+          };
+        });
+        renderMatches();
+      } catch (err) {
+        document.getElementById('matchesContainer').innerHTML =
+          '<div style="text-align:center;padding:50px;color:#e94560">فشل تحميل المباريات: ' + err.message + '</div>';
+      }
+    }
 
     function renderMatches() {
       const container = document.getElementById('matchesContainer');
-      let matches = sortMatches(matchesData);
+      let list = [...allMatches];
 
       if (currentFilter !== 'all') {
-        matches = getMatchesByStatus(matches, currentFilter);
+        list = list.filter(m => m.status === currentFilter);
       }
 
-      if (matches.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:50px;color:#666;font-size:18px">لا توجد مباريات</div>';
+      list.sort((a, b) => a.date - b.date);
+
+      if (list.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:50px;color:#667;font-size:18px">لا توجد مباريات</div>';
         return;
       }
 
-      const grouped = groupByDate(matches);
+      const grouped = groupByDate(list);
       let html = '';
 
-      Object.keys(grouped).sort().forEach(date => {
-        html += `<div class="date-header">📅 ${formatDate(date)}</div>`;
+      Object.keys(grouped).forEach(dateKey => {
+        const first = grouped[dateKey][0];
+        html += `<div class="date-header">${formatDate(first.date)}</div>`;
 
-        grouped[date].forEach(m => {
-          const statusClass = m.status;
-          const badgeText = m.status === 'live' ? '🔴 مباشر' : m.status === 'upcoming' ? '⏳ قادمة' : '✅ انتهت';
-          const resultHtml = m.result ? `<span class="result">${m.result}</span>` : '';
+        grouped[dateKey].forEach(m => {
+          const has = m.hasStream || m.channels.length > 0;
+          const badgeText = m.status === 'live' ? 'مباشر' : m.status === 'upcoming' ? 'قادمة' : 'انتهت';
+
+          let channelsHtml = m.channels.map(ch =>
+            `<span class="meta-tag channel">${ch}</span>`
+          ).join('');
+
+          let commentatorHtml = m.commentator
+            ? `<span class="meta-tag commentator">المعلق: ${m.commentator}</span>`
+            : '';
+
+          let leagueHtml = m.league
+            ? `<div class="league-badge">${m.league}</div>`
+            : '';
+
+          let scoreHtml = m.hasScore
+            ? `<div class="score">${m.homeScore} - ${m.awayScore}</div>`
+            : '<div class="vs">VS</div>';
 
           html += `
-            <div class="match-card ${statusClass}" onclick="goToMatch('${m.id}')">
-              <div class="match-teams">
-                <div class="team left">
-                  <span class="name">${m.team1.name}</span>
-                  <span class="flag">${m.team1.flag}</span>
+            <div class="match-card ${m.status}${!has ? ' no-stream' : ''}" ${has ? `onclick="goToMatch('${m.id}')"` : ''}>
+              <div class="match-body">
+                ${leagueHtml}
+                <div class="teams-row">
+                  <div class="team-side">
+                    <div class="name">${m.teams.home.name}</div>
+                    <div class="logo"><img src="${m.teams.home.badge}" alt="" onerror="this.style.display='none'"></div>
+                  </div>
+                  <div class="match-vs">${scoreHtml}</div>
+                  <div class="team-side right">
+                    <div class="logo"><img src="${m.teams.away.badge}" alt="" onerror="this.style.display='none'"></div>
+                    <div class="name">${m.teams.away.name}</div>
+                  </div>
                 </div>
-                <div class="match-vs">
-                  ${resultHtml || 'VS'}
-                </div>
-                <div class="team">
-                  <span class="flag">${m.team2.flag}</span>
-                  <span class="name">${m.team2.name}</span>
-                </div>
-              </div>
-
-              <div class="match-info">
-                <div class="time">${m.time}</div>
-                <div class="badge ${m.status}">${badgeText}</div>
-              </div>
-
-              <div class="match-details">
-                <span class="league">${m.league} - ${m.round}</span>
-                <span>🏟 ${m.stadium}</span>
-                <div class="channels">
-                  ${m.channels.map(c => `<span>${c}</span>`).join('')}
+                <div class="meta-row">
+                  <span class="meta-tag icon-only" style="font-size:13px">${formatTime(m.date)}</span>
+                  <span class="badge-status ${m.status}">${badgeText}</span>
+                  ${channelsHtml}
+                  ${commentatorHtml}
                 </div>
               </div>
-
-              <button class="play-btn">▶</button>
+              <button class="play-btn ${!has ? 'disabled' : ''}">${has ? '▶' : '✕'}</button>
             </div>
           `;
         });
       });
 
       container.innerHTML = html;
+
+      document.querySelector('.count-bar')?.remove();
+      const bar = document.createElement('div');
+      bar.className = 'count-bar';
+      bar.textContent = `إجمالي ${list.length} مباراة`;
+      container.prepend(bar);
     }
 
     function filterMatches(filter) {
       currentFilter = filter;
       document.querySelectorAll('.tabs button').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.includes(
-          filter === 'all' ? 'الكل' : filter === 'live' ? 'المباشر' : filter === 'upcoming' ? 'القادمة' : 'المنتهية'
-        ));
+        const map = { all: 'الكل', live: 'المباشر', upcoming: 'القادمة', finished: 'المنتهية' };
+        btn.classList.toggle('active', btn.textContent.includes(map[filter]));
       });
       renderMatches();
     }
@@ -366,7 +480,7 @@
       window.location.href = 'match.html?id=' + id;
     }
 
-    renderMatches();
+    loadMatches();
   </script>
 </body>
 </html>

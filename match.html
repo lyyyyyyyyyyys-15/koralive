@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مشاهدة المباراة</title>
+  <title>مشاهدة المباراة - kora live</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,11 +13,9 @@
       color: #fff;
       min-height: 100vh;
     }
-
-    /* ===== الهيدر ===== */
     header {
       background: linear-gradient(135deg, #1a1a3e, #16213e);
-      padding: 15px 20px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       gap: 15px;
@@ -26,331 +24,348 @@
       top: 0;
       z-index: 100;
     }
-    header a {
-      color: #8899aa;
-      text-decoration: none;
-      font-size: 20px;
-      transition: 0.3s;
-    }
+    header a { color: #8899aa; text-decoration: none; font-size: 22px; }
     header a:hover { color: #e94560; }
-    header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      flex: 1;
-      text-align: center;
-    }
+    header h1 { font-size: 18px; font-weight: 700; flex: 1; text-align: center; }
 
     .container { max-width: 1100px; margin: auto; padding: 20px; }
 
-    /* ===== معلومات المباراة ===== */
     .match-header {
       background: linear-gradient(135deg, #1a1a3e, #16213e);
-      border-radius: 16px;
-      padding: 25px;
-      text-align: center;
-      border: 1px solid #2a2a4e;
-      margin-bottom: 20px;
+      border-radius: 16px; padding: 25px; text-align: center;
+      border: 1px solid #2a2a4e; margin-bottom: 20px;
     }
-    .match-header .league {
-      color: #88c0ff;
-      font-size: 14px;
-      background: #0f3460;
-      display: inline-block;
-      padding: 3px 15px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
-    .match-teams-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
-      margin: 15px 0;
-    }
-    .match-teams-header .team {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .match-teams-header .team .flag { font-size: 48px; }
-    .match-teams-header .team .name {
-      font-size: 20px;
-      font-weight: 700;
-    }
-    .match-teams-header .vs {
-      font-size: 28px;
-      font-weight: 900;
-      color: #e94560;
-    }
-    .match-teams-header .vs .result {
-      display: block;
-      font-size: 32px;
-      color: #fff;
-    }
-    .match-meta {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-      color: #8899aa;
-      font-size: 14px;
-    }
-    .match-meta span { display: flex; align-items: center; gap: 5px; }
 
-    /* ===== المشغل ===== */
+    .match-league {
+      display: inline-block;
+      background: #0f3460;
+      color: #88c0ff;
+      padding: 4px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .teams-big {
+      display: flex; justify-content: center; align-items: center; gap: 30px; margin: 10px 0;
+    }
+    .teams-big .team { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .teams-big .team .logo { width: 64px; height: 64px; border-radius: 50%; background: #2a2a4e; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .teams-big .team .logo img { width: 100%; height: 100%; object-fit: contain; }
+    .teams-big .team .name { font-size: 18px; font-weight: 700; }
+    .teams-big .vs { font-size: 24px; font-weight: 900; color: #e94560; }
+
+    .match-meta { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; color: #8899aa; font-size: 13px; }
+
+    .info-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #2a2a4e;
+    }
+    .info-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      background: #1a1a2e;
+      padding: 5px 12px;
+      border-radius: 10px;
+    }
+    .info-tag.channel { color: #4fc3f7; border: 1px solid rgba(79,195,247,0.2); }
+    .info-tag.commentator { color: #ffb74d; border: 1px solid rgba(255,183,77,0.2); }
+    .info-tag.referee { color: #81c784; border: 1px solid rgba(129,199,132,0.2); }
+    .info-tag.league { color: #88c0ff; border: 1px solid rgba(136,192,255,0.2); }
+
     .player-section {
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
-      position: relative;
-      min-height: 450px;
-      border: 1px solid #2a2a4e;
+      background: #000; border-radius: 16px; overflow: hidden;
+      position: relative; min-height: 450px; border: 1px solid #2a2a4e;
     }
-    .player-section iframe {
-      width: 100%;
-      height: 500px;
-      border: none;
-      display: block;
-    }
+    .player-section iframe { width: 100%; height: 500px; border: none; display: block; }
 
     .loading-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #0f0f1a;
-      z-index: 10;
-      transition: 0.3s;
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #0f0f1a; z-index: 10;
     }
-    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
-    .spinner {
-      width: 50px; height: 50px;
-      border: 4px solid #2a2a4e;
-      border-top-color: #e94560;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+    .loading-overlay.hidden { display: none; }
+    .spinner { width: 50px; height: 50px; border: 4px solid #2a2a4e; border-top-color: #e94560; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-overlay p { margin-top: 15px; color: #8899aa; }
 
-    /* ===== السيرفرات ===== */
     .servers {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin: 20px 0;
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 15px 0;
     }
     .servers button {
-      background: #16213e;
-      color: #fff;
-      border: 2px solid #2a2a4e;
-      padding: 10px 25px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      transition: 0.3s;
+      background: #16213e; color: #fff; border: 2px solid #2a2a4e;
+      padding: 8px 20px; border-radius: 10px; cursor: pointer;
+      font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; transition: 0.3s;
     }
     .servers button:hover { border-color: #e94560; }
-    .servers button.active {
-      background: #e94560;
-      border-color: #e94560;
-    }
+    .servers button.active { background: #e94560; border-color: #e94560; }
 
-    /* ===== أزرار ===== */
-    .actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 15px 0;
-    }
-    .actions button, .actions a {
-      background: #16213e;
-      color: #fff;
-      border: 1px solid #2a2a4e;
-      padding: 8px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 14px;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-    .actions button:hover, .actions a:hover { background: #e94560; border-color: #e94560; }
+    .error-msg { background: #e94560; padding: 15px; border-radius: 10px; text-align: center; margin: 20px 0; display: none; }
 
-    .error-msg {
-      background: #e94560;
-      color: #fff;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      margin: 20px 0;
-      display: none;
+    .no-stream-box {
+      text-align: center; padding: 60px 20px; color: #667;
     }
+    .no-stream-box .big-icon { font-size: 60px; margin-bottom: 15px; }
 
-    /* ===== التجاوب ===== */
     @media (max-width: 600px) {
-      .player-section iframe { height: 300px; }
-      .match-teams-header { gap: 15px; }
-      .match-teams-header .team .flag { font-size: 36px; }
-      .match-teams-header .team .name { font-size: 16px; }
-      .match-teams-header .vs { font-size: 20px; }
+      .player-section iframe { height: 280px; }
+      .player-section { min-height: 280px; }
+      .teams-big { gap: 15px; }
+      .teams-big .team .logo { width: 48px; height: 48px; }
+      .teams-big .team .name { font-size: 14px; }
     }
   </style>
 </head>
 <body>
-
   <header>
     <a href="index.html">←</a>
     <h1 id="matchTitle">المباراة</h1>
   </header>
 
   <div class="container">
-    <!-- معلومات المباراة -->
     <div class="match-header" id="matchInfo"></div>
-
-    <!-- السيرفرات -->
     <div class="servers" id="serverButtons"></div>
-
-    <!-- المشغل -->
     <div class="player-section" id="playerSection">
       <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <p>⏳ جارٍ تجهيز البث المباشر...</p>
+        <p>جارٍ تجهيز البث...</p>
       </div>
       <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
     </div>
-
-    <!-- أزرار إضافية -->
-    <div class="actions">
-      <button onclick="location.reload()">🔄 تحديث</button>
-      <a href="#" id="directLink" target="_blank">🔗 رابط البث الأصلي</a>
-    </div>
-
-    <!-- خطأ -->
     <div class="error-msg" id="errorMsg"></div>
-
-    <!-- رابط العودة -->
-    <div style="text-align:center;margin:30px 0">
-      <a href="index.html" style="color:#8899aa;text-decoration:none">← العودة لصفحة المباريات</a>
+    <div style="text-align:center;margin:25px 0">
+      <a href="index.html" style="color:#8899aa;text-decoration:none">← العودة</a>
     </div>
   </div>
 
-  <script src="matches-data.js"></script>
+  <script src="config.js"></script>
   <script>
-    // ============================================
-    // ⚙️ إعدادات API
-    // ============================================
-    const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-
-    // ============================================
-    // 🚀 التطبيق
-    // ============================================
     const matchId = new URLSearchParams(window.location.search).get('id');
-    const match = matchesData.find(m => m.id === matchId);
+    const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 
-    if (!match) {
-      document.getElementById('errorMsg').textContent = '❌ المباراة غير موجودة';
-      document.getElementById('errorMsg').style.display = 'block';
-    } else {
-      document.title = match.team1.name + ' vs ' + match.team2.name + ' | kora live';
-      document.getElementById('matchTitle').textContent = match.team1.name + ' vs ' + match.team2.name;
-
-      renderMatchInfo(match);
-      setupServers(match);
-      loadMatch(match);
+    function normalizeName(name) {
+      return name.replace(/FC$/, '').replace(/^FC\s/, '').trim().toLowerCase();
     }
 
-    function renderMatchInfo(m) {
-      const resultHtml = m.result ? `<span class="result">${m.result}</span>` : '';
+    function matchTeamName(a, b) {
+      return normalizeName(a) === normalizeName(b) || normalizeName(a).includes(normalizeName(b)) || normalizeName(b).includes(normalizeName(a));
+    }
+
+    async function loadMatch() {
+      if (!matchId) { showError('معرف المباراة غير موجود'); return; }
+
+      try {
+        document.querySelector('#matchInfo').innerHTML = '<div class="loading-overlay" style="position:static;padding:30px"><div class="spinner"></div></div>';
+
+        const [detailRes] = await Promise.all([
+          fetch(CONFIG.SPORTSRC_BASE + '?data=detail&id=' + encodeURIComponent(matchId) + '&category=football'),
+          fetchLeaguesForMatch()
+        ]);
+        const json = await detailRes.json();
+
+        if (!json.success || !json.data) {
+          showError('لم يتم العثور على المباراة');
+          document.querySelector('#matchInfo').innerHTML = '';
+          return;
+        }
+
+        const m = json.data;
+        const kooraSources = CONFIG.KOORA_SOURCES[matchId] || [];
+        const enriched = enrichMatchDetail(m);
+
+        renderMatchInfo(m, enriched);
+
+        let allSources = [];
+
+        if (m.sources && m.sources.length > 0) {
+          m.sources.forEach((s, i) => {
+            allSources.push({
+              label: 'سيرفر ' + (i + 1) + (s.hd ? ' HD' : ''),
+              type: 'sportsrc',
+              url: s.embedUrl
+            });
+          });
+        }
+
+        kooraSources.forEach((url, i) => {
+          allSources.push({
+            label: 'كوورة ' + (i + 1),
+            type: 'kooora',
+            url: url
+          });
+        });
+
+        if (allSources.length === 0) {
+          document.getElementById('playerSection').innerHTML =
+            '<div class="no-stream-box"><div class="big-icon">📺</div><h2>لا يوجد بث متاح</h2><p style="color:#667;margin-top:10px">سيتم إضافة البث لاحقاً</p></div>';
+          document.getElementById('serverButtons').innerHTML = '';
+          return;
+        }
+
+        const btnContainer = document.getElementById('serverButtons');
+        btnContainer.innerHTML = '';
+        allSources.forEach((src, i) => {
+          const btn = document.createElement('button');
+          btn.textContent = src.label;
+          if (src.type === 'kooora') btn.style.borderColor = '#e94560';
+          btn.onclick = () => loadSource(src, i);
+          if (i === 0) btn.classList.add('active');
+          btnContainer.appendChild(btn);
+        });
+
+        await loadSource(allSources[0], 0);
+
+      } catch (err) {
+        showError('خطأ: ' + err.message);
+      }
+    }
+
+    let matchLeaguesCache = {};
+
+    async function fetchLeaguesForMatch() {
+      try {
+        const results = await Promise.allSettled(
+          MAJOR_LEAGUES.map(lg =>
+            fetch(CONFIG.SPORTSRC_BASE + '?data=results&category=scores&league=' + lg.code)
+              .then(r => r.json())
+              .then(d => ({ league: lg.name, data: d.data || {} }))
+          )
+        );
+        results.forEach(r => {
+          if (r.status === 'fulfilled' && r.value.data) {
+            matchLeaguesCache[r.value.league] = r.value.data;
+          }
+        });
+      } catch (e) {}
+    }
+
+    function enrichMatchDetail(m) {
+      const configInfo = CONFIG.MATCH_INFO[matchId];
+      if (configInfo) return configInfo;
+
+      for (const leagueName in matchLeaguesCache) {
+        const data = matchLeaguesCache[leagueName];
+        const allGames = [...(data.live || []), ...(data.finished || [])];
+
+        for (const game of allGames) {
+          const gHome = game.homeTeam?.name || game.homeTeam?.shortName || '';
+          const gAway = game.awayTeam?.name || game.awayTeam?.shortName || '';
+          if ((matchTeamName(m.teams.home.name, gHome) && matchTeamName(m.teams.away.name, gAway)) ||
+              (matchTeamName(m.teams.home.name, gAway) && matchTeamName(m.teams.away.name, gHome))) {
+            const leagueInfo = CONFIG.LEAGUE_CHANNELS[leagueName] || CONFIG.LEAGUE_CHANNELS[game.competition?.name];
+            return {
+              league: game.competition?.name || leagueName,
+              channels: leagueInfo?.channels || [],
+              commentator: leagueInfo?.commentator || game.referees?.[0]?.name || '',
+              referee: game.referees?.[0]?.name || ''
+            };
+          }
+        }
+      }
+      return { league: '', channels: [], commentator: '', referee: '' };
+    }
+
+    function renderMatchInfo(m, enriched) {
+      document.title = m.teams.home.name + ' vs ' + m.teams.away.name + ' | kora live';
+      document.getElementById('matchTitle').textContent = m.teams.home.name + ' vs ' + m.teams.away.name;
+
+      const d = new Date(m.date);
+      const dateStr = d.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const timeStr = d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+      const leagueHtml = enriched.league
+        ? `<span class="info-tag league">${enriched.league}</span>`
+        : '';
+
+      const channelsHtml = enriched.channels.map(ch =>
+        `<span class="info-tag channel">${ch}</span>`
+      ).join('');
+
+      const commentatorHtml = enriched.commentator
+        ? `<span class="info-tag commentator">المعلق: ${enriched.commentator}</span>`
+        : '';
+
       document.getElementById('matchInfo').innerHTML = `
-        <div class="league">${m.league} - ${m.round}</div>
-        <div class="match-teams-header">
+        <div class="match-league">${enriched.league || 'مباراة كرة قدم'}</div>
+        <div class="teams-big">
           <div class="team">
-            <span class="flag">${m.team1.flag}</span>
-            <span class="name">${m.team1.name}</span>
+            <div class="logo"><img src="${m.teams.home.badge}" alt="" onerror="this.style.display='none'"></div>
+            <div class="name">${m.teams.home.name}</div>
           </div>
-          <div class="vs">${resultHtml || 'VS'}</div>
+          <div class="vs">VS</div>
           <div class="team">
-            <span class="flag">${m.team2.flag}</span>
-            <span class="name">${m.team2.name}</span>
+            <div class="logo"><img src="${m.teams.away.badge}" alt="" onerror="this.style.display='none'"></div>
+            <div class="name">${m.teams.away.name}</div>
           </div>
         </div>
         <div class="match-meta">
-          <span>📅 ${formatDate(m.date)}</span>
-          <span>⏰ ${m.time}</span>
-          <span>🏟 ${m.stadium}</span>
-          <span>📺 ${m.channels.join(' - ')}</span>
+          <span>${dateStr}</span>
+          <span>|</span>
+          <span>${timeStr}</span>
+        </div>
+        <div class="info-bar">
+          ${leagueHtml}
+          ${channelsHtml}
+          ${commentatorHtml}
         </div>
       `;
     }
 
-    function setupServers(m) {
-      const buttons = document.getElementById('serverButtons');
-      if (m.sources.length === 0) {
-        buttons.innerHTML = '<div style="color:#666">لا توجد روابط بث متاحة</div>';
-        return;
-      }
-      buttons.innerHTML = '';
-      m.sources.forEach((url, i) => {
-        const btn = document.createElement('button');
-        btn.textContent = '🎬 سيرفر ' + (i + 1);
-        btn.onclick = () => loadStream(url, i);
-        if (i === 0) btn.classList.add('active');
-        buttons.appendChild(btn);
-      });
-    }
-
-    async function loadMatch(m) {
-      if (m.sources.length === 0) return;
-      await loadStream(m.sources[0], 0);
-    }
-
-    async function loadStream(url, index) {
+    async function loadSource(src, index) {
       const player = document.getElementById('player');
       const loading = document.getElementById('loadingOverlay');
       const errorMsg = document.getElementById('errorMsg');
-      const directLink = document.getElementById('directLink');
 
       loading.classList.remove('hidden');
       player.style.display = 'none';
       errorMsg.style.display = 'none';
-      directLink.href = url;
 
-      // تفعيل الزر الحالي
       document.querySelectorAll('.servers button').forEach((btn, i) => {
         btn.classList.toggle('active', i === index);
       });
 
       try {
-        const res = await fetch(API_URL + '?url=' + encodeURIComponent(url));
-        const data = await res.json();
-
-        if (data.success && data.iframes.length > 0) {
-          player.srcdoc = data.iframes[0];
+        if (src.type === 'sportsrc') {
+          player.src = src.url;
           player.style.display = 'block';
           loading.classList.add('hidden');
-        } else {
-          showError('لم يتم العثور على بث في هذا الرابط');
-          loading.classList.add('hidden');
+        } else if (src.type === 'kooora') {
+          const res = await fetch(GAS_URL + '?url=' + encodeURIComponent(src.url));
+          const data = await res.json();
+          if (data.success && data.iframes.length > 0) {
+            player.srcdoc = data.iframes[0];
+            player.style.display = 'block';
+            loading.classList.add('hidden');
+          } else {
+            showError('لم يتم العثور على بث في هذا الرابط');
+            loading.classList.add('hidden');
+          }
         }
       } catch (err) {
-        showError('فشل الاتصال بالخادم: ' + err.message);
+        if (src.type === 'kooora') {
+          showError('فشل الاتصال بخادم kooora: الرجاء التأكد من نشر Google Apps Script');
+        } else {
+          showError('فشل تحميل البث: ' + err.message);
+        }
         loading.classList.add('hidden');
       }
     }
 
     function showError(msg) {
       const el = document.getElementById('errorMsg');
-      el.textContent = '❌ ' + msg;
+      el.textContent = msg;
       el.style.display = 'block';
     }
+
+    loadMatch();
   </script>
 </body>
 </html>
