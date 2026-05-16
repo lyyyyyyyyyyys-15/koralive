@@ -22,7 +22,6 @@
     header h1 { font-size: 32px; font-weight: 900; }
     header h1 span { color: #e94560; }
     header p { color: #8899aa; font-size: 16px; margin-top: 5px; }
-
     .tabs {
       display: flex;
       justify-content: center;
@@ -49,10 +48,8 @@
     }
     .tabs button:hover { border-color: #e94560; color: #fff; }
     .tabs button.active { background: #e94560; border-color: #e94560; color: #fff; }
-
     .container { max-width: 900px; margin: auto; padding: 20px; }
     .count-bar { text-align: center; color: #667; font-size: 14px; margin-bottom: 20px; }
-
     .match-card {
       background: linear-gradient(135deg, #1a1a3e, #16213e);
       border-radius: 16px;
@@ -80,27 +77,12 @@
     }
     .match-card.finished { opacity: 0.55; }
     .match-card.finished:hover { opacity: 1; }
-    .match-card.no-stream { opacity: 0.5; cursor: default; }
-    .match-card.no-stream:hover { transform: none; box-shadow: none; border-color: #2a2a4e; }
-
-    .match-body { flex: 1; min-width: 0; }
-
-    .league-badge {
-      display: inline-block;
-      background: #0f3460;
-      color: #88c0ff;
-      padding: 3px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
+    .match-card-body { flex: 1; min-width: 0; }
     .teams-row {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .team-side {
       display: flex;
@@ -121,11 +103,8 @@
     }
     .team-side .logo img { width: 100%; height: 100%; object-fit: contain; }
     .team-side .name { font-weight: 700; font-size: 14px; white-space: nowrap; }
-
-    .match-vs { text-align: center; min-width: 40px; }
+    .match-vs { text-align: center; min-width: 50px; }
     .match-vs .vs { color: #e94560; font-weight: 900; font-size: 13px; }
-    .match-vs .score { font-size: 18px; font-weight: 900; color: #fff; }
-
     .match-col {
       display: flex;
       flex-direction: column;
@@ -145,28 +124,23 @@
     @keyframes blink { 50% { opacity: 0.5; } }
     .badge-status.upcoming { background: #0f3460; color: #88c0ff; }
     .badge-status.finished { background: #2a2a4e; color: #667; }
-
     .meta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
       margin-top: 6px;
     }
     .meta-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
       font-size: 11px;
       color: #8899aa;
       background: #1a1a2e;
       padding: 3px 10px;
       border-radius: 8px;
+      white-space: nowrap;
     }
     .meta-tag.channel { color: #4fc3f7; background: rgba(79,195,247,0.1); }
     .meta-tag.commentator { color: #ffb74d; background: rgba(255,183,77,0.1); }
-    .meta-tag.icon-only { padding: 3px 6px; }
-
     .play-btn {
       background: #e94560; color: #fff; border: none;
       width: 46px; height: 46px; border-radius: 50%;
@@ -174,14 +148,8 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; transition: 0.3s;
     }
-    .match-card.live .play-btn { animation: pulseBtn 2s infinite; }
-    @keyframes pulseBtn {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(233,69,96,0.6); }
-      50% { box-shadow: 0 0 0 12px rgba(233,69,96,0); }
-    }
     .play-btn:hover { transform: scale(1.1); }
-    .play-btn.disabled { background: #2a2a4e; cursor: not-allowed; }
-
+    .play-btn.disabled { background: #2a2a4e; cursor: not-allowed; opacity: 0.5; }
     .loading-matches { text-align: center; padding: 60px; color: #667; }
     .spinner {
       width: 40px; height: 40px;
@@ -192,7 +160,6 @@
       margin: 0 auto 15px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .date-header {
       font-size: 18px;
       font-weight: 700;
@@ -201,18 +168,16 @@
       border-right: 4px solid #e94560;
       color: #e94560;
     }
-
-    footer {
-      text-align: center; padding: 30px; color: #555;
-      font-size: 14px; border-top: 1px solid #2a2a4e; margin-top: 30px;
-    }
-
+    footer { text-align: center; padding: 30px; color: #555; font-size: 14px; border-top: 1px solid #2a2a4e; margin-top: 30px; }
+    .error-box { text-align: center; padding: 50px 20px; color: #e94560; }
+    .error-box .big { font-size: 48px; margin-bottom: 15px; }
+    .fallback-note { text-align: center; padding: 10px; color: #667; font-size: 12px; margin-bottom: 10px; }
     @media (max-width: 600px) {
       .match-card { flex-wrap: wrap; padding: 15px; gap: 10px; }
-      .match-body { width: calc(100% - 60px); }
+      .match-card-body { width: calc(100% - 60px); }
       .team-side .name { font-size: 12px; }
       .team-side .logo { width: 30px; height: 30px; }
-      .meta-row { gap: 5px; }
+      .meta-row { gap: 4px; }
       .meta-tag { font-size: 10px; padding: 2px 7px; }
       .play-btn { width: 40px; height: 40px; font-size: 16px; }
     }
@@ -241,10 +206,10 @@
   <footer>kora live &copy; 2026</footer>
 
   <script src="config.js"></script>
+  <script src="matches-data.js"></script>
   <script>
     let allMatches = [];
     let currentFilter = 'all';
-    let leaguesCache = {};
 
     function getStatus(match) {
       const now = Date.now();
@@ -255,8 +220,8 @@
       return 'finished';
     }
 
-    function hasStream(match) {
-      return CONFIG.KOORA_SOURCES[match.id] && CONFIG.KOORA_SOURCES[match.id].length > 0;
+    function hasLocalStream(id) {
+      return CONFIG.KOORA_SOURCES[id] && CONFIG.KOORA_SOURCES[id].length > 0;
     }
 
     function formatTime(ts) {
@@ -285,107 +250,55 @@
       return groups;
     }
 
-    function normalizeName(name) {
-      return name.replace(/FC$/, '').replace(/^FC\s/, '').trim().toLowerCase();
-    }
-
-    function matchTeamName(apiName, scoreName) {
-      const a = normalizeName(apiName);
-      const b = normalizeName(scoreName);
-      return a === b || a.includes(b) || b.includes(a);
-    }
-
-    async function fetchLeaguesData() {
-      try {
-        const results = await Promise.allSettled(
-          MAJOR_LEAGUES.map(lg =>
-            fetch(CONFIG.SPORTSRC_BASE + '?data=results&category=scores&league=' + lg.code)
-              .then(r => r.json())
-              .then(d => ({ league: lg.name, data: d.data || {} }))
-          )
-        );
-        results.forEach(r => {
-          if (r.status === 'fulfilled' && r.value.data) {
-            leaguesCache[r.value.league] = r.value.data;
-          }
-        });
-      } catch (e) {}
-    }
-
-    function enrichWithScores(match) {
-      const homeNorm = normalizeName(match.teams.home.name);
-      const awayNorm = normalizeName(match.teams.away.name);
-
-      for (const leagueName in leaguesCache) {
-        const data = leaguesCache[leagueName];
-        const allGames = [...(data.live || []), ...(data.finished || [])];
-
-        for (const game of allGames) {
-          const gHome = normalizeName(game.homeTeam?.name || game.homeTeam?.shortName || '');
-          const gAway = normalizeName(game.awayTeam?.name || game.awayTeam?.shortName || '');
-          if ((matchTeamName(match.teams.home.name, gHome) && matchTeamName(match.teams.away.name, gAway)) ||
-              (matchTeamName(match.teams.home.name, gAway) && matchTeamName(match.teams.away.name, gHome))) {
-            return {
-              league: leagueName,
-              homeScore: game.score?.fullTime?.home,
-              awayScore: game.score?.fullTime?.away,
-              referee: game.referees?.[0]?.name,
-              competition: game.competition?.name
-            };
-          }
-        }
-      }
-      return null;
-    }
-
-    function enrichMatch(match) {
-      const configInfo = CONFIG.MATCH_INFO[match.id];
-      if (configInfo) return configInfo;
-
-      const scoreMatch = enrichWithScores(match);
-      if (scoreMatch) {
-        const leagueInfo = CONFIG.LEAGUE_CHANNELS[scoreMatch.league] || CONFIG.LEAGUE_CHANNELS[scoreMatch.competition];
-        return {
-          league: scoreMatch.competition || scoreMatch.league,
-          channels: leagueInfo?.channels || [],
-          commentator: leagueInfo?.commentator || scoreMatch.referee || '',
-          homeScore: scoreMatch.homeScore,
-          awayScore: scoreMatch.awayScore
-        };
-      }
-
-      return { league: '', channels: [], commentator: '' };
+    function getMatchInfo(id) {
+      return CONFIG.MATCH_INFO[id] || null;
     }
 
     async function loadMatches() {
-      try {
-        const [matchesRes] = await Promise.all([
-          fetch(CONFIG.SPORTSRC_BASE + '?data=matches&category=football'),
-          fetchLeaguesData()
-        ]);
-        const json = await matchesRes.json();
-        const raw = json.data || [];
+      const container = document.getElementById('matchesContainer');
+      let raw = [];
 
-        allMatches = raw.map(m => {
-          const enriched = enrichMatch(m);
-          const status = getStatus(m);
-          return {
-            ...m,
-            status,
-            hasScore: enriched.homeScore != null,
-            homeScore: enriched.homeScore,
-            awayScore: enriched.awayScore,
-            league: enriched.league,
-            channels: enriched.channels,
-            commentator: enriched.commentator,
-            hasStream: hasStream(m)
-          };
-        });
-        renderMatches();
+      try {
+        console.log('[kora] جاري تحميل المباريات من API...');
+        const res = await fetch(CONFIG.SPORTSRC_BASE + '?data=matches&category=football');
+        const json = await res.json();
+        raw = json.data || [];
+        console.log('[kora] تم تحميل ' + raw.length + ' مباراة من API');
       } catch (err) {
-        document.getElementById('matchesContainer').innerHTML =
-          '<div style="text-align:center;padding:50px;color:#e94560">فشل تحميل المباريات: ' + err.message + '</div>';
+        console.warn('[kora] فشل اتصال API: ' + err.message);
+        if (matchesData && matchesData.length > 0) {
+          console.log('[kora] استخدام البيانات المحلية كاحتياط');
+          raw = matchesData.map(m => ({
+            id: m.id,
+            title: m.team1.name + ' vs ' + m.team2.name,
+            category: 'football',
+            date: new Date(m.date + 'T' + (m.time || '20:00') + ':00').getTime(),
+            teams: {
+              home: { name: m.team1.name, badge: m.team1.logo || '' },
+              away: { name: m.team2.name, badge: m.team2.logo || '' }
+            },
+            _local: true,
+            _channels: m.channels || [],
+            _commentator: m.commentator || CONFIG.LEAGUE_CHANNELS[m.league]?.commentator || '',
+            _league: m.league
+          }));
+        } else {
+          throw err;
+        }
       }
+
+      allMatches = raw.map(m => {
+        const status = getStatus(m);
+        const info = getMatchInfo(m.id);
+        const league = info?.league || m._league || '';
+        const channels = info?.channels || m._channels || [];
+        const commentator = info?.commentator || m._commentator || '';
+        const hasStream = hasLocalStream(m.id);
+
+        return { ...m, status, league, channels, commentator, hasStream };
+      });
+
+      renderMatches();
     }
 
     function renderMatches() {
@@ -399,7 +312,7 @@
       list.sort((a, b) => a.date - b.date);
 
       if (list.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:50px;color:#667;font-size:18px">لا توجد مباريات</div>';
+        container.innerHTML = '<div style="text-align:center;padding:50px;color:#667;font-size:18px">لا توجد مباريات في هذا التصنيف</div>';
         return;
       }
 
@@ -411,50 +324,36 @@
         html += `<div class="date-header">${formatDate(first.date)}</div>`;
 
         grouped[dateKey].forEach(m => {
-          const has = m.hasStream || m.channels.length > 0;
+          const canWatch = m.hasStream || m.channels.length > 0;
           const badgeText = m.status === 'live' ? 'مباشر' : m.status === 'upcoming' ? 'قادمة' : 'انتهت';
 
-          let channelsHtml = m.channels.map(ch =>
-            `<span class="meta-tag channel">${ch}</span>`
-          ).join('');
-
-          let commentatorHtml = m.commentator
-            ? `<span class="meta-tag commentator">المعلق: ${m.commentator}</span>`
-            : '';
-
-          let leagueHtml = m.league
-            ? `<div class="league-badge">${m.league}</div>`
-            : '';
-
-          let scoreHtml = m.hasScore
-            ? `<div class="score">${m.homeScore} - ${m.awayScore}</div>`
-            : '<div class="vs">VS</div>';
+          let extras = '';
+          if (m.league) extras += `<span class="meta-tag">${m.league}</span>`;
+          m.channels.forEach(ch => { extras += `<span class="meta-tag channel">${ch}</span>`; });
+          if (m.commentator) extras += `<span class="meta-tag commentator">المعلق: ${m.commentator}</span>`;
 
           html += `
-            <div class="match-card ${m.status}${!has ? ' no-stream' : ''}" ${has ? `onclick="goToMatch('${m.id}')"` : ''}>
-              <div class="match-body">
-                ${leagueHtml}
+            <div class="match-card ${m.status}${canWatch ? '' : ' finished'}" ${canWatch ? `onclick="goToMatch('${m.id}')"` : ''}>
+              <div class="match-card-body">
                 <div class="teams-row">
                   <div class="team-side">
                     <div class="name">${m.teams.home.name}</div>
                     <div class="logo"><img src="${m.teams.home.badge}" alt="" onerror="this.style.display='none'"></div>
                   </div>
-                  <div class="match-vs">${scoreHtml}</div>
+                  <div class="match-vs"><div class="vs">VS</div></div>
                   <div class="team-side right">
                     <div class="logo"><img src="${m.teams.away.badge}" alt="" onerror="this.style.display='none'"></div>
                     <div class="name">${m.teams.away.name}</div>
                   </div>
                 </div>
                 <div class="meta-row">
-                  <span class="meta-tag icon-only" style="font-size:13px">${formatTime(m.date)}</span>
+                  <span class="meta-tag">${formatTime(m.date)}</span>
                   <span class="badge-status ${m.status}">${badgeText}</span>
-                  ${channelsHtml}
-                  ${commentatorHtml}
+                  ${extras}
                 </div>
               </div>
-              <button class="play-btn ${!has ? 'disabled' : ''}">${has ? '▶' : '✕'}</button>
-            </div>
-          `;
+              <button class="play-btn ${canWatch ? '' : 'disabled'}">${canWatch ? '▶' : '✕'}</button>
+            </div>`;
         });
       });
 
@@ -477,7 +376,7 @@
     }
 
     function goToMatch(id) {
-      window.location.href = 'match.html?id=' + id;
+      window.location.href = 'match.html?id=' + encodeURIComponent(id);
     }
 
     loadMatches();

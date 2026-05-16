@@ -27,26 +27,12 @@
     header a { color: #8899aa; text-decoration: none; font-size: 22px; }
     header a:hover { color: #e94560; }
     header h1 { font-size: 18px; font-weight: 700; flex: 1; text-align: center; }
-
     .container { max-width: 1100px; margin: auto; padding: 20px; }
-
     .match-header {
       background: linear-gradient(135deg, #1a1a3e, #16213e);
       border-radius: 16px; padding: 25px; text-align: center;
       border: 1px solid #2a2a4e; margin-bottom: 20px;
     }
-
-    .match-league {
-      display: inline-block;
-      background: #0f3460;
-      color: #88c0ff;
-      padding: 4px 14px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
     .teams-big {
       display: flex; justify-content: center; align-items: center; gap: 30px; margin: 10px 0;
     }
@@ -55,9 +41,7 @@
     .teams-big .team .logo img { width: 100%; height: 100%; object-fit: contain; }
     .teams-big .team .name { font-size: 18px; font-weight: 700; }
     .teams-big .vs { font-size: 24px; font-weight: 900; color: #e94560; }
-
     .match-meta { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; color: #8899aa; font-size: 13px; }
-
     .info-bar {
       display: flex;
       flex-wrap: wrap;
@@ -68,9 +52,6 @@
       border-top: 1px solid #2a2a4e;
     }
     .info-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
       font-size: 12px;
       background: #1a1a2e;
       padding: 5px 12px;
@@ -78,15 +59,11 @@
     }
     .info-tag.channel { color: #4fc3f7; border: 1px solid rgba(79,195,247,0.2); }
     .info-tag.commentator { color: #ffb74d; border: 1px solid rgba(255,183,77,0.2); }
-    .info-tag.referee { color: #81c784; border: 1px solid rgba(129,199,132,0.2); }
-    .info-tag.league { color: #88c0ff; border: 1px solid rgba(136,192,255,0.2); }
-
     .player-section {
       background: #000; border-radius: 16px; overflow: hidden;
       position: relative; min-height: 450px; border: 1px solid #2a2a4e;
     }
     .player-section iframe { width: 100%; height: 500px; border: none; display: block; }
-
     .loading-overlay {
       position: absolute; top: 0; left: 0; right: 0; bottom: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -96,7 +73,6 @@
     .spinner { width: 50px; height: 50px; border: 4px solid #2a2a4e; border-top-color: #e94560; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-overlay p { margin-top: 15px; color: #8899aa; }
-
     .servers {
       display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 15px 0;
     }
@@ -107,14 +83,9 @@
     }
     .servers button:hover { border-color: #e94560; }
     .servers button.active { background: #e94560; border-color: #e94560; }
-
     .error-msg { background: #e94560; padding: 15px; border-radius: 10px; text-align: center; margin: 20px 0; display: none; }
-
-    .no-stream-box {
-      text-align: center; padding: 60px 20px; color: #667;
-    }
+    .no-stream-box { text-align: center; padding: 60px 20px; color: #667; }
     .no-stream-box .big-icon { font-size: 60px; margin-bottom: 15px; }
-
     @media (max-width: 600px) {
       .player-section iframe { height: 280px; }
       .player-section { min-height: 280px; }
@@ -147,60 +118,66 @@
   </div>
 
   <script src="config.js"></script>
+  <script src="matches-data.js"></script>
   <script>
     const matchId = new URLSearchParams(window.location.search).get('id');
     const GAS_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-
-    function normalizeName(name) {
-      return name.replace(/FC$/, '').replace(/^FC\s/, '').trim().toLowerCase();
-    }
-
-    function matchTeamName(a, b) {
-      return normalizeName(a) === normalizeName(b) || normalizeName(a).includes(normalizeName(b)) || normalizeName(b).includes(normalizeName(a));
-    }
 
     async function loadMatch() {
       if (!matchId) { showError('معرف المباراة غير موجود'); return; }
 
       try {
-        document.querySelector('#matchInfo').innerHTML = '<div class="loading-overlay" style="position:static;padding:30px"><div class="spinner"></div></div>';
+        document.querySelector('#matchInfo').innerHTML = '<div style="text-align:center;padding:30px"><div class="spinner" style="margin:auto"></div></div>';
 
-        const [detailRes] = await Promise.all([
-          fetch(CONFIG.SPORTSRC_BASE + '?data=detail&id=' + encodeURIComponent(matchId) + '&category=football'),
-          fetchLeaguesForMatch()
-        ]);
-        const json = await detailRes.json();
+        let m, kooraSources = [];
+        let localData = null;
 
-        if (!json.success || !json.data) {
-          showError('لم يتم العثور على المباراة');
-          document.querySelector('#matchInfo').innerHTML = '';
+        try {
+          const res = await fetch(CONFIG.SPORTSRC_BASE + '?data=detail&id=' + encodeURIComponent(matchId) + '&category=football');
+          const json = await res.json();
+          if (json.success && json.data) {
+            m = json.data;
+            kooraSources = CONFIG.KOORA_SOURCES[matchId] || [];
+          }
+        } catch (e) {}
+
+        if (!m) {
+          localData = matchesData.find(x => x.id === matchId);
+          if (!localData) { showError('لم يتم العثور على المباراة'); document.querySelector('#matchInfo').innerHTML = ''; return; }
+          m = {
+            id: localData.id,
+            title: localData.team1.name + ' vs ' + localData.team2.name,
+            date: new Date(localData.date + 'T' + (localData.time || '20:00') + ':00').getTime(),
+            teams: {
+              home: { name: localData.team1.name, badge: localData.team1.logo || '' },
+              away: { name: localData.team2.name, badge: localData.team2.logo || '' }
+            },
+            sources: (localData.sources || []).map(s => ({ embedUrl: s, hd: true }))
+          };
+          kooraSources = [];
+        }
+
+        const info = CONFIG.MATCH_INFO[matchId] || {};
+        const enriched = {
+          league: info.league || localData?.league || '',
+          channels: info.channels || localData?.channels || [],
+          commentator: info.commentator || localData?.commentator || CONFIG.LEAGUE_CHANNELS[localData?.league]?.commentator || ''
+        };
+        renderMatchInfo(m, enriched);
+
+        if (!m.sources || !m.sources.length) {
+          document.getElementById('playerSection').innerHTML =
+            '<div class="no-stream-box"><div class="big-icon">📺</div><h2>لا يوجد بث متاح</h2><p style="color:#667;margin-top:10px">سيتم إضافة البث لاحقاً</p></div>';
+          document.getElementById('serverButtons').innerHTML = '';
           return;
         }
 
-        const m = json.data;
-        const kooraSources = CONFIG.KOORA_SOURCES[matchId] || [];
-        const enriched = enrichMatchDetail(m);
-
-        renderMatchInfo(m, enriched);
-
         let allSources = [];
-
-        if (m.sources && m.sources.length > 0) {
-          m.sources.forEach((s, i) => {
-            allSources.push({
-              label: 'سيرفر ' + (i + 1) + (s.hd ? ' HD' : ''),
-              type: 'sportsrc',
-              url: s.embedUrl
-            });
-          });
-        }
-
+        m.sources.forEach((s, i) => {
+          allSources.push({ label: 'سيرفر ' + (i + 1) + (s.hd ? ' HD' : ''), type: 'sportsrc', url: s.embedUrl });
+        });
         kooraSources.forEach((url, i) => {
-          allSources.push({
-            label: 'كوورة ' + (i + 1),
-            type: 'kooora',
-            url: url
-          });
+          allSources.push({ label: 'كوورة ' + (i + 1), type: 'kooora', url });
         });
 
         if (allSources.length === 0) {
@@ -228,51 +205,6 @@
       }
     }
 
-    let matchLeaguesCache = {};
-
-    async function fetchLeaguesForMatch() {
-      try {
-        const results = await Promise.allSettled(
-          MAJOR_LEAGUES.map(lg =>
-            fetch(CONFIG.SPORTSRC_BASE + '?data=results&category=scores&league=' + lg.code)
-              .then(r => r.json())
-              .then(d => ({ league: lg.name, data: d.data || {} }))
-          )
-        );
-        results.forEach(r => {
-          if (r.status === 'fulfilled' && r.value.data) {
-            matchLeaguesCache[r.value.league] = r.value.data;
-          }
-        });
-      } catch (e) {}
-    }
-
-    function enrichMatchDetail(m) {
-      const configInfo = CONFIG.MATCH_INFO[matchId];
-      if (configInfo) return configInfo;
-
-      for (const leagueName in matchLeaguesCache) {
-        const data = matchLeaguesCache[leagueName];
-        const allGames = [...(data.live || []), ...(data.finished || [])];
-
-        for (const game of allGames) {
-          const gHome = game.homeTeam?.name || game.homeTeam?.shortName || '';
-          const gAway = game.awayTeam?.name || game.awayTeam?.shortName || '';
-          if ((matchTeamName(m.teams.home.name, gHome) && matchTeamName(m.teams.away.name, gAway)) ||
-              (matchTeamName(m.teams.home.name, gAway) && matchTeamName(m.teams.away.name, gHome))) {
-            const leagueInfo = CONFIG.LEAGUE_CHANNELS[leagueName] || CONFIG.LEAGUE_CHANNELS[game.competition?.name];
-            return {
-              league: game.competition?.name || leagueName,
-              channels: leagueInfo?.channels || [],
-              commentator: leagueInfo?.commentator || game.referees?.[0]?.name || '',
-              referee: game.referees?.[0]?.name || ''
-            };
-          }
-        }
-      }
-      return { league: '', channels: [], commentator: '', referee: '' };
-    }
-
     function renderMatchInfo(m, enriched) {
       document.title = m.teams.home.name + ' vs ' + m.teams.away.name + ' | kora live';
       document.getElementById('matchTitle').textContent = m.teams.home.name + ' vs ' + m.teams.away.name;
@@ -281,20 +213,12 @@
       const dateStr = d.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       const timeStr = d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-      const leagueHtml = enriched.league
-        ? `<span class="info-tag league">${enriched.league}</span>`
-        : '';
-
-      const channelsHtml = enriched.channels.map(ch =>
-        `<span class="info-tag channel">${ch}</span>`
-      ).join('');
-
-      const commentatorHtml = enriched.commentator
-        ? `<span class="info-tag commentator">المعلق: ${enriched.commentator}</span>`
-        : '';
+      let infoHtml = '';
+      if (enriched.league) infoHtml += `<span class="info-tag">${enriched.league}</span>`;
+      enriched.channels.forEach(ch => { infoHtml += `<span class="info-tag channel">${ch}</span>`; });
+      if (enriched.commentator) infoHtml += `<span class="info-tag commentator">المعلق: ${enriched.commentator}</span>`;
 
       document.getElementById('matchInfo').innerHTML = `
-        <div class="match-league">${enriched.league || 'مباراة كرة قدم'}</div>
         <div class="teams-big">
           <div class="team">
             <div class="logo"><img src="${m.teams.home.badge}" alt="" onerror="this.style.display='none'"></div>
@@ -311,11 +235,7 @@
           <span>|</span>
           <span>${timeStr}</span>
         </div>
-        <div class="info-bar">
-          ${leagueHtml}
-          ${channelsHtml}
-          ${commentatorHtml}
-        </div>
+        ${infoHtml ? `<div class="info-bar">${infoHtml}</div>` : ''}
       `;
     }
 
@@ -350,11 +270,7 @@
           }
         }
       } catch (err) {
-        if (src.type === 'kooora') {
-          showError('فشل الاتصال بخادم kooora: الرجاء التأكد من نشر Google Apps Script');
-        } else {
-          showError('فشل تحميل البث: ' + err.message);
-        }
+        showError(src.type === 'kooora' ? 'فشل الاتصال: تأكد من نشر Google Apps Script' : 'فشل تحميل البث: ' + err.message);
         loading.classList.add('hidden');
       }
     }
