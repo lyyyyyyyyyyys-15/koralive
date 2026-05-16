@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مشاهدة المباراة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: #0f0f1a;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* ===== الهيدر ===== */
+    header {
+      background: linear-gradient(135deg, #1a1a3e, #16213e);
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 2px solid #e94560;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header a {
+      color: #8899aa;
+      text-decoration: none;
+      font-size: 20px;
+      transition: 0.3s;
+    }
+    header a:hover { color: #e94560; }
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      flex: 1;
+      text-align: center;
+    }
+
+    .container { max-width: 1100px; margin: auto; padding: 20px; }
+
+    /* ===== معلومات المباراة ===== */
+    .match-header {
+      background: linear-gradient(135deg, #1a1a3e, #16213e);
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      border: 1px solid #2a2a4e;
+      margin-bottom: 20px;
+    }
+    .match-header .league {
+      color: #88c0ff;
+      font-size: 14px;
+      background: #0f3460;
+      display: inline-block;
+      padding: 3px 15px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .match-teams-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      margin: 15px 0;
+    }
+    .match-teams-header .team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .match-teams-header .team .flag { font-size: 48px; }
+    .match-teams-header .team .name {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .match-teams-header .vs {
+      font-size: 28px;
+      font-weight: 900;
+      color: #e94560;
+    }
+    .match-teams-header .vs .result {
+      display: block;
+      font-size: 32px;
+      color: #fff;
+    }
+    .match-meta {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: #8899aa;
+      font-size: 14px;
+    }
+    .match-meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* ===== المشغل ===== */
+    .player-section {
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      min-height: 450px;
+      border: 1px solid #2a2a4e;
+    }
+    .player-section iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+      display: block;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0f0f1a;
+      z-index: 10;
+      transition: 0.3s;
+    }
+    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 50px; height: 50px;
+      border: 4px solid #2a2a4e;
+      border-top-color: #e94560;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-overlay p { margin-top: 15px; color: #8899aa; }
+
+    /* ===== السيرفرات ===== */
+    .servers {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .servers button {
+      background: #16213e;
+      color: #fff;
+      border: 2px solid #2a2a4e;
+      padding: 10px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      transition: 0.3s;
+    }
+    .servers button:hover { border-color: #e94560; }
+    .servers button.active {
+      background: #e94560;
+      border-color: #e94560;
+    }
+
+    /* ===== أزرار ===== */
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 15px 0;
+    }
+    .actions button, .actions a {
+      background: #16213e;
+      color: #fff;
+      border: 1px solid #2a2a4e;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 14px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .actions button:hover, .actions a:hover { background: #e94560; border-color: #e94560; }
+
+    .error-msg {
+      background: #e94560;
+      color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 20px 0;
+      display: none;
+    }
+
+    /* ===== التجاوب ===== */
+    @media (max-width: 600px) {
+      .player-section iframe { height: 300px; }
+      .match-teams-header { gap: 15px; }
+      .match-teams-header .team .flag { font-size: 36px; }
+      .match-teams-header .team .name { font-size: 16px; }
+      .match-teams-header .vs { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html">←</a>
+    <h1 id="matchTitle">المباراة</h1>
+  </header>
+
+  <div class="container">
+    <!-- معلومات المباراة -->
+    <div class="match-header" id="matchInfo"></div>
+
+    <!-- السيرفرات -->
+    <div class="servers" id="serverButtons"></div>
+
+    <!-- المشغل -->
+    <div class="player-section" id="playerSection">
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>⏳ جارٍ تجهيز البث المباشر...</p>
+      </div>
+      <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
+    </div>
+
+    <!-- أزرار إضافية -->
+    <div class="actions">
+      <button onclick="location.reload()">🔄 تحديث</button>
+      <a href="#" id="directLink" target="_blank">🔗 رابط البث الأصلي</a>
+    </div>
+
+    <!-- خطأ -->
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- رابط العودة -->
+    <div style="text-align:center;margin:30px 0">
+      <a href="index.html" style="color:#8899aa;text-decoration:none">← العودة لصفحة المباريات</a>
+    </div>
+  </div>
+
+  <script src="matches-data.js"></script>
+  <script>
+    // ============================================
+    // ⚙️ إعدادات API
+    // ============================================
+    const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+    // ============================================
+    // 🚀 التطبيق
+    // ============================================
+    const matchId = new URLSearchParams(window.location.search).get('id');
+    const match = matchesData.find(m => m.id === matchId);
+
+    if (!match) {
+      document.getElementById('errorMsg').textContent = '❌ المباراة غير موجودة';
+      document.getElementById('errorMsg').style.display = 'block';
+    } else {
+      document.title = match.team1.name + ' vs ' + match.team2.name + ' | kora live';
+      document.getElementById('matchTitle').textContent = match.team1.name + ' vs ' + match.team2.name;
+
+      renderMatchInfo(match);
+      setupServers(match);
+      loadMatch(match);
+    }
+
+    function renderMatchInfo(m) {
+      const resultHtml = m.result ? `<span class="result">${m.result}</span>` : '';
+      document.getElementById('matchInfo').innerHTML = `
+        <div class="league">${m.league} - ${m.round}</div>
+        <div class="match-teams-header">
+          <div class="team">
+            <span class="flag">${m.team1.flag}</span>
+            <span class="name">${m.team1.name}</span>
+          </div>
+          <div class="vs">${resultHtml || 'VS'}</div>
+          <div class="team">
+            <span class="flag">${m.team2.flag}</span>
+            <span class="name">${m.team2.name}</span>
+          </div>
+        </div>
+        <div class="match-meta">
+          <span>📅 ${formatDate(m.date)}</span>
+          <span>⏰ ${m.time}</span>
+          <span>🏟 ${m.stadium}</span>
+          <span>📺 ${m.channels.join(' - ')}</span>
+        </div>
+      `;
+    }
+
+    function setupServers(m) {
+      const buttons = document.getElementById('serverButtons');
+      if (m.sources.length === 0) {
+        buttons.innerHTML = '<div style="color:#666">لا توجد روابط بث متاحة</div>';
+        return;
+      }
+      buttons.innerHTML = '';
+      m.sources.forEach((url, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = '🎬 سيرفر ' + (i + 1);
+        btn.onclick = () => loadStream(url, i);
+        if (i === 0) btn.classList.add('active');
+        buttons.appendChild(btn);
+      });
+    }
+
+    async function loadMatch(m) {
+      if (m.sources.length === 0) return;
+      await loadStream(m.sources[0], 0);
+    }
+
+    async function loadStream(url, index) {
+      const player = document.getElementById('player');
+      const loading = document.getElementById('loadingOverlay');
+      const errorMsg = document.getElementById('errorMsg');
+      const directLink = document.getElementById('directLink');
+
+      loading.classList.remove('hidden');
+      player.style.display = 'none';
+      errorMsg.style.display = 'none';
+      directLink.href = url;
+
+      // تفعيل الزر الحالي
+      document.querySelectorAll('.servers button').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+
+      try {
+        const res = await fetch(API_URL + '?url=' + encodeURIComponent(url));
+        const data = await res.json();
+
+        if (data.success && data.iframes.length > 0) {
+          player.srcdoc = data.iframes[0];
+          player.style.display = 'block';
+          loading.classList.add('hidden');
+        } else {
+          showError('لم يتم العثور على بث في هذا الرابط');
+          loading.classList.add('hidden');
+        }
+      } catch (err) {
+        showError('فشل الاتصال بالخادم: ' + err.message);
+        loading.classList.add('hidden');
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = '❌ ' + msg;
+      el.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

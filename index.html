@@ -3,232 +3,370 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مشاهدة المباراة</title>
+  <title>kora live - مباريات اليوم بث مباشر</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-    body { background: #1a1a2e; color: #fff; text-align: center; }
-    .container { max-width: 1100px; margin: auto; padding: 20px; }
-    
-    h1 { margin: 20px 0; font-size: 24px; }
-    
-    .player-wrapper {
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-      margin: 20px 0;
-      min-height: 400px;
-      position: relative;
-    }
-    
-    .player-wrapper iframe {
-      width: 100%;
-      height: 550px;
-      border: none;
-      display: block;
-    }
-    
-    .servers {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin: 20px 0;
-    }
-    
-    .servers button {
-      background: #16213e;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: #0f0f1a;
       color: #fff;
-      border: 2px solid #0f3460;
+      min-height: 100vh;
+    }
+
+    /* ===== الهيدر ===== */
+    header {
+      background: linear-gradient(135deg, #1a1a3e 0%, #16213e 50%, #0f3460 100%);
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 3px solid #e94560;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(233,69,96,0.1) 0%, transparent 60%);
+      animation: pulseGlow 4s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+    header h1 {
+      font-size: 32px;
+      font-weight: 900;
+      position: relative;
+      z-index: 1;
+    }
+    header h1 span { color: #e94560; }
+    header p {
+      color: #8899aa;
+      font-size: 16px;
+      position: relative;
+      z-index: 1;
+      margin-top: 5px;
+    }
+
+    /* ===== الأزرار ===== */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 20px;
+      flex-wrap: wrap;
+      background: #1a1a2e;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #2a2a4e;
+    }
+    .tabs button {
+      background: transparent;
+      color: #8899aa;
+      border: 2px solid #2a2a4e;
       padding: 10px 25px;
-      border-radius: 8px;
+      border-radius: 25px;
       cursor: pointer;
+      font-family: 'Tajawal', sans-serif;
       font-size: 15px;
+      font-weight: 700;
       transition: 0.3s;
     }
-    
-    .servers button:hover,
-    .servers button.active {
+    .tabs button:hover { border-color: #e94560; color: #fff; }
+    .tabs button.active {
       background: #e94560;
       border-color: #e94560;
+      color: #fff;
     }
-    
-    .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+
+    /* ===== المحتوى ===== */
+    .container { max-width: 900px; margin: auto; padding: 20px; }
+
+    /* قسم التاريخ */
+    .date-header {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 25px 0 15px;
+      padding-right: 15px;
+      border-right: 4px solid #e94560;
+      color: #e94560;
+    }
+
+    /* ===== كارد المباراة ===== */
+    .match-card {
+      background: linear-gradient(135deg, #1a1a3e, #16213e);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      border: 1px solid #2a2a4e;
+      transition: 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .match-card:hover {
+      border-color: #e94560;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(233,69,96,0.2);
+    }
+    .match-card.live {
+      border-color: #e94560;
+      animation: livePulse 2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { border-color: #e94560; }
+      50% { border-color: #ff6b81; }
+    }
+    .match-card.finished { opacity: 0.6; }
+    .match-card.finished:hover { opacity: 1; }
+
+    .match-teams {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
+    .team {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 17px;
+      min-width: 120px;
+    }
+    .team.left { justify-content: flex-end; }
+    .team .flag { font-size: 28px; }
+    .team .name { white-space: nowrap; }
+
+    .match-vs {
+      color: #e94560;
+      font-weight: 900;
+      font-size: 14px;
+    }
+    .match-vs .result {
+      display: block;
+      text-align: center;
       font-size: 20px;
-      color: #888;
+      color: #fff;
     }
-    
-    .error {
+
+    .match-info {
+      text-align: center;
+      min-width: 100px;
+    }
+    .match-info .time {
+      font-size: 22px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .match-info .date-sm {
+      font-size: 13px;
+      color: #8899aa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge.live {
       background: #e94560;
       color: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      display: none;
+      animation: blink 1s infinite;
     }
-    
-    #debug {
-      background: #0d0d0d;
-      color: #0f0;
-      font-family: monospace;
+    @keyframes blink { 50% { opacity: 0.5; } }
+    .badge.upcoming { background: #0f3460; color: #88c0ff; }
+    .badge.finished { background: #2a2a4e; color: #666; }
+
+    .match-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      font-size: 13px;
+      color: #8899aa;
+      min-width: 130px;
+    }
+    .match-details .league {
+      background: #2a2a4e;
+      padding: 3px 10px;
+      border-radius: 12px;
       font-size: 12px;
-      text-align: left;
-      padding: 15px;
+      color: #88c0ff;
+    }
+    .match-details .channels {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .match-details .channels span {
+      background: #1a1a3e;
+      padding: 2px 8px;
       border-radius: 8px;
-      max-height: 300px;
-      overflow: auto;
-      margin: 20px 0;
-      display: none;
-      white-space: pre-wrap;
+      font-size: 11px;
+      color: #aabbcc;
+      border: 1px solid #2a2a4e;
+    }
+
+    .play-btn {
+      background: #e94560;
+      color: #fff;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 22px;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .match-card.live .play-btn {
+      animation: pulseBtn 2s infinite;
+    }
+    @keyframes pulseBtn {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(233,69,96,0.6); }
+      50% { box-shadow: 0 0 0 12px rgba(233,69,96,0); }
+    }
+    .play-btn:hover { transform: scale(1.1); }
+
+    /* ===== التجاوب ===== */
+    @media (max-width: 768px) {
+      .match-card { flex-wrap: wrap; }
+      .match-teams { width: 100%; justify-content: center; }
+      .team { min-width: auto; font-size: 14px; }
+      .team .flag { font-size: 22px; }
+      .match-info { min-width: auto; }
+      .match-details { width: 100%; align-items: center; text-align: center; }
+      .play-btn { margin: 0 auto; }
+    }
+
+    /* ===== فوتر ===== */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #555;
+      font-size: 14px;
+      border-top: 1px solid #2a2a4e;
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚽ مشاهدة المباراة</h1>
-    
-    <!-- أزرار السيرفرات -->
-    <div class="servers" id="serverButtons"></div>
-    
-    <!-- مشغل الفيديو -->
-    <div class="player-wrapper" id="playerWrapper">
-      <div class="loading" id="loading">⏳ جارٍ تحميل البث...</div>
-      <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
-    </div>
-    
-    <!-- رسالة خطأ -->
-    <div class="error" id="errorMsg"></div>
-    
-    <!-- تصحيح (للاختبار) -->
-    <details>
-      <summary style="cursor:pointer;color:#888;margin-top:10px">تصحيح Debug</summary>
-      <div id="debug"></div>
-    </details>
+
+  <header>
+    <h1>⚽ <span>kora</span> live</h1>
+    <p>بث مباشر لجميع مباريات اليوم</p>
+  </header>
+
+  <div class="tabs">
+    <button class="active" onclick="filterMatches('all')">📋 الكل</button>
+    <button onclick="filterMatches('live')">🔴 المباشر الآن</button>
+    <button onclick="filterMatches('upcoming')">⏳ القادمة</button>
+    <button onclick="filterMatches('finished')">✅ المنتهية</button>
   </div>
 
+  <div class="container" id="matchesContainer"></div>
+
+  <footer>
+    kora live &copy; 2025 - جميع الحقوق محفوظة
+  </footer>
+
+  <script src="matches-data.js"></script>
   <script>
-    // =====================================================
-    // ⚙️ الإعدادات - عدل حسب موقعك
-    // =====================================================
-    
-    const CONFIG = {
-      // رابط Web App بعد النشر (بدّل هذا برابطك)
-      API_URL: 'https://script.google.com/macros/s/AKfycbwDwgsEcVe_hNduCQskFEYgJMgsAoMLUXRNyxIPKy9JdtIvzLql1J0957Fad39zfe227w/exec',
-      
-      // المباريات - أضف مبارياتك هنا
-      matches: {
-        'real-madrid-bayern': {
-          title: 'ريال مدريد vs بايرن ميونخ',
-          sources: [
-            'https://16.kooora-kora.live/2025/06/11-be-in-sport-1211111.html',
-            'https://16.kooora-kora.live/2025/06/11-be-in-sport-1211111.html'
-          ]
-        },
-        'liverpool-psg': {
-          title: 'ليفربول vs باريس سان جيرمان',
-          sources: [
-            'https://16.kooora-kora.live/2025/06/11-be-in-sport-1211111.html'
-          ]
-        }
+    let currentFilter = 'all';
+
+    function renderMatches() {
+      const container = document.getElementById('matchesContainer');
+      let matches = sortMatches(matchesData);
+
+      if (currentFilter !== 'all') {
+        matches = getMatchesByStatus(matches, currentFilter);
       }
-    };
 
-    // =====================================================
-    // 🚀 التطبيق
-    // =====================================================
-    
-    const matchId = getMatchIdFromURL();
-    const match = CONFIG.matches[matchId];
-    
-    if (!match) {
-      showError('المباراة غير موجودة');
-    } else {
-      document.title = match.title;
-      document.querySelector('h1').textContent = '⚽ ' + match.title;
-      loadMatch(match);
-    }
-
-    // استخراج معرف المباراة من الرابط
-    function getMatchIdFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('id') || 'real-madrid-bayern'; // القيمة الافتراضية
-    }
-
-    // تحميل المباراة
-    async function loadMatch(match) {
-      const player = document.getElementById('player');
-      const wrapper = document.getElementById('playerWrapper');
-      const loading = document.getElementById('loading');
-      const buttons = document.getElementById('serverButtons');
-      
-      loading.style.display = 'block';
-      player.style.display = 'none';
-      
-      // إنشاء أزرار السيرفرات
-      buttons.innerHTML = '';
-      match.sources.forEach((url, i) => {
-        const btn = document.createElement('button');
-        btn.textContent = 'سيرفر ' + (i + 1);
-        btn.onclick = () => loadIframe(url, i);
-        if (i === 0) btn.classList.add('active');
-        buttons.appendChild(btn);
-      });
-      
-      // تحميل أول سيرفر
-      await loadIframe(match.sources[0], 0);
-    }
-
-    // استدعاء API وجلب iframe
-    async function loadIframe(url, index) {
-      const player = document.getElementById('player');
-      const loading = document.getElementById('loading');
-      const errorMsg = document.getElementById('errorMsg');
-      const debug = document.getElementById('debug');
-      
-      loading.style.display = 'block';
-      player.style.display = 'none';
-      errorMsg.style.display = 'none';
-      
-      // تفعيل الزر الحالي
-      document.querySelectorAll('.servers button').forEach((btn, i) => {
-        btn.classList.toggle('active', i === index);
-      });
-      
-      log('جلب iframe من: ' + url);
-      
-      try {
-        const response = await fetch(CONFIG.API_URL + '?url=' + encodeURIComponent(url));
-        const data = await response.json();
-        
-        log('الاستجابة: ' + JSON.stringify(data, null, 2));
-        
-        if (data.success && data.iframes.length > 0) {
-          // استخدم أول iframe
-          player.srcdoc = data.iframes[0];
-          loading.style.display = 'none';
-          player.style.display = 'block';
-        } else {
-          showError('لم يتم العثور على بث في هذا الرابط');
-        }
-      } catch (err) {
-        log('خطأ: ' + err.toString());
-        showError('فشل الاتصال بالخادم: ' + err.message);
+      if (matches.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:50px;color:#666;font-size:18px">لا توجد مباريات</div>';
+        return;
       }
+
+      const grouped = groupByDate(matches);
+      let html = '';
+
+      Object.keys(grouped).sort().forEach(date => {
+        html += `<div class="date-header">📅 ${formatDate(date)}</div>`;
+
+        grouped[date].forEach(m => {
+          const statusClass = m.status;
+          const badgeText = m.status === 'live' ? '🔴 مباشر' : m.status === 'upcoming' ? '⏳ قادمة' : '✅ انتهت';
+          const resultHtml = m.result ? `<span class="result">${m.result}</span>` : '';
+
+          html += `
+            <div class="match-card ${statusClass}" onclick="goToMatch('${m.id}')">
+              <div class="match-teams">
+                <div class="team left">
+                  <span class="name">${m.team1.name}</span>
+                  <span class="flag">${m.team1.flag}</span>
+                </div>
+                <div class="match-vs">
+                  ${resultHtml || 'VS'}
+                </div>
+                <div class="team">
+                  <span class="flag">${m.team2.flag}</span>
+                  <span class="name">${m.team2.name}</span>
+                </div>
+              </div>
+
+              <div class="match-info">
+                <div class="time">${m.time}</div>
+                <div class="badge ${m.status}">${badgeText}</div>
+              </div>
+
+              <div class="match-details">
+                <span class="league">${m.league} - ${m.round}</span>
+                <span>🏟 ${m.stadium}</span>
+                <div class="channels">
+                  ${m.channels.map(c => `<span>${c}</span>`).join('')}
+                </div>
+              </div>
+
+              <button class="play-btn">▶</button>
+            </div>
+          `;
+        });
+      });
+
+      container.innerHTML = html;
     }
 
-    function showError(msg) {
-      document.getElementById('loading').style.display = 'none';
-      const el = document.getElementById('errorMsg');
-      el.textContent = '❌ ' + msg;
-      el.style.display = 'block';
+    function filterMatches(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.tabs button').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(
+          filter === 'all' ? 'الكل' : filter === 'live' ? 'المباشر' : filter === 'upcoming' ? 'القادمة' : 'المنتهية'
+        ));
+      });
+      renderMatches();
     }
 
-    function log(msg) {
-      document.getElementById('debug').textContent += msg + '\n---\n';
+    function goToMatch(id) {
+      window.location.href = 'match.html?id=' + id;
     }
+
+    renderMatches();
   </script>
 </body>
 </html>
