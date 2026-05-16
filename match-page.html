@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مشاهدة المباراة</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: #1a1a2e; color: #fff; text-align: center; }
+    .container { max-width: 1100px; margin: auto; padding: 20px; }
+    
+    h1 { margin: 20px 0; font-size: 24px; }
+    
+    .player-wrapper {
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 20px 0;
+      min-height: 400px;
+      position: relative;
+    }
+    
+    .player-wrapper iframe {
+      width: 100%;
+      height: 550px;
+      border: none;
+      display: block;
+    }
+    
+    .servers {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    
+    .servers button {
+      background: #16213e;
+      color: #fff;
+      border: 2px solid #0f3460;
+      padding: 10px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+    
+    .servers button:hover,
+    .servers button.active {
+      background: #e94560;
+      border-color: #e94560;
+    }
+    
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      color: #888;
+    }
+    
+    .error {
+      background: #e94560;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: none;
+    }
+    
+    #debug {
+      background: #0d0d0d;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 12px;
+      text-align: left;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 300px;
+      overflow: auto;
+      margin: 20px 0;
+      display: none;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚽ مشاهدة المباراة</h1>
+    
+    <!-- أزرار السيرفرات -->
+    <div class="servers" id="serverButtons"></div>
+    
+    <!-- مشغل الفيديو -->
+    <div class="player-wrapper" id="playerWrapper">
+      <div class="loading" id="loading">⏳ جارٍ تحميل البث...</div>
+      <iframe id="player" allowfullscreen allow="autoplay; fullscreen"></iframe>
+    </div>
+    
+    <!-- رسالة خطأ -->
+    <div class="error" id="errorMsg"></div>
+    
+    <!-- تصحيح (للاختبار) -->
+    <details>
+      <summary style="cursor:pointer;color:#888;margin-top:10px">تصحيح Debug</summary>
+      <div id="debug"></div>
+    </details>
+  </div>
+
+  <script>
+    // =====================================================
+    // ⚙️ الإعدادات - عدل حسب موقعك
+    // =====================================================
+    
+    const CONFIG = {
+      // رابط Web App بعد النشر (بدّل هذا برابطك)
+      API_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+      
+      // المباريات - أضف مبارياتك هنا
+      matches: {
+        'real-madrid-bayern': {
+          title: 'ريال مدريد vs بايرن ميونخ',
+          sources: [
+            'https://16.kooora-kora.live/2025/06/11-be-in-sport-1211111.html',
+            'https://16.kooora-kora.live/2025/06/11-be-in-sport-1211111.html'
+          ]
+        },
+        'liverpool-psg': {
+          title: 'ليفربول vs باريس سان جيرمان',
+          sources: [
+            'https://16.kooora-kora.live/2025/06/11-be-in-sport-1211111.html'
+          ]
+        }
+      }
+    };
+
+    // =====================================================
+    // 🚀 التطبيق
+    // =====================================================
+    
+    const matchId = getMatchIdFromURL();
+    const match = CONFIG.matches[matchId];
+    
+    if (!match) {
+      showError('المباراة غير موجودة');
+    } else {
+      document.title = match.title;
+      document.querySelector('h1').textContent = '⚽ ' + match.title;
+      loadMatch(match);
+    }
+
+    // استخراج معرف المباراة من الرابط
+    function getMatchIdFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id') || 'real-madrid-bayern'; // القيمة الافتراضية
+    }
+
+    // تحميل المباراة
+    async function loadMatch(match) {
+      const player = document.getElementById('player');
+      const wrapper = document.getElementById('playerWrapper');
+      const loading = document.getElementById('loading');
+      const buttons = document.getElementById('serverButtons');
+      
+      loading.style.display = 'block';
+      player.style.display = 'none';
+      
+      // إنشاء أزرار السيرفرات
+      buttons.innerHTML = '';
+      match.sources.forEach((url, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = 'سيرفر ' + (i + 1);
+        btn.onclick = () => loadIframe(url, i);
+        if (i === 0) btn.classList.add('active');
+        buttons.appendChild(btn);
+      });
+      
+      // تحميل أول سيرفر
+      await loadIframe(match.sources[0], 0);
+    }
+
+    // استدعاء API وجلب iframe
+    async function loadIframe(url, index) {
+      const player = document.getElementById('player');
+      const loading = document.getElementById('loading');
+      const errorMsg = document.getElementById('errorMsg');
+      const debug = document.getElementById('debug');
+      
+      loading.style.display = 'block';
+      player.style.display = 'none';
+      errorMsg.style.display = 'none';
+      
+      // تفعيل الزر الحالي
+      document.querySelectorAll('.servers button').forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+      
+      log('جلب iframe من: ' + url);
+      
+      try {
+        const response = await fetch(CONFIG.API_URL + '?url=' + encodeURIComponent(url));
+        const data = await response.json();
+        
+        log('الاستجابة: ' + JSON.stringify(data, null, 2));
+        
+        if (data.success && data.iframes.length > 0) {
+          // استخدم أول iframe
+          player.srcdoc = data.iframes[0];
+          loading.style.display = 'none';
+          player.style.display = 'block';
+        } else {
+          showError('لم يتم العثور على بث في هذا الرابط');
+        }
+      } catch (err) {
+        log('خطأ: ' + err.toString());
+        showError('فشل الاتصال بالخادم: ' + err.message);
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById('loading').style.display = 'none';
+      const el = document.getElementById('errorMsg');
+      el.textContent = '❌ ' + msg;
+      el.style.display = 'block';
+    }
+
+    function log(msg) {
+      document.getElementById('debug').textContent += msg + '\n---\n';
+    }
+  </script>
+</body>
+</html>
